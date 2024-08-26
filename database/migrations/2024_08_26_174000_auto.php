@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('modelo', 50)->nullable();
             $table->integer('anio')->nullable();
             $table->string('color', 30);
-            $table->float('precio')->nullable();
+            $table->decimal('precio', 10, 2)->nullable();
             $table->boolean('activo')->default(true);
             $table->timestamps();
         });
