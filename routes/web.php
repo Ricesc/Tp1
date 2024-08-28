@@ -8,12 +8,14 @@ Route::get('/', function () {
 });
 
 
-Route::get('/CrearAuto', [AutoController::class, 'CrearAuto']);
+Route::post('/CrearAuto', [AutoController::class, 'CrearAuto']);
+
+Route::get('/MostrarAutos', [AutoController::class, 'MostrarAutos'])->name('MostrarAutos');
+
+Route::get('/ver_formulario', [AutoController::class, 'ver_formulario']);
 
 Route::get('/BuscarAuto/{id}', [AutoController::class, 'BuscarAuto']);
 
 Route::get('/ModificarAuto/{id}', [AutoController::class, 'ModificarAuto']);
-
-Route::get('/MostrarAutos', [AutoController::class, 'MostrarAutos']);
 
 Route::get('/EliminarAuto/{id}', [AutoController::class, 'EliminarAuto']);

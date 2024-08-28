@@ -7,26 +7,32 @@ use Illuminate\Http\Request;
 
 class AutoController extends Controller
 {
-    public function CrearAuto()
+    public function CrearAuto(Request $request)
     {
-        $marca = 'Ford';
-        $modelo = 'Mustang';
-        $anio = 2018;
-        $color = 'Negro';
-        $precio = 35000.00;
-        $activo = false;
-
-
         $autos = Auto::create([
-            'marca' => $marca,
-            'modelo' => $modelo,
-            'anio' => $anio,
-            'color' => $color,
-            'precio' => $precio,
-            'activo' => $activo,
+            'marca' => $request->marca,
+            'modelo' => $request->modelo,
+            'anio' => $request->anio,
+            'color' => $request->color,
+            'precio' => $request->precio,
+            'activo' => $request->activo,
         ]);
 
-        return response()->json(['message' => 'Auto creado correctamente', 'autos' => $autos]);
+        return redirect()->route('MostrarAutos')->with('success', 'auto creado correctamente');
+    }
+
+    public function ver_formulario()
+    {
+        return view('autos.formulario');
+    }
+
+    public function MostrarAutos()
+    {
+        $autos = Auto::where('activo', '!=', null)
+            ->orderBy('marca', 'desc')
+            ->paginate(5);
+
+        return view('autos.index', compact('autos'));
     }
 
     public function BuscarAuto($id)
@@ -55,12 +61,6 @@ class AutoController extends Controller
         }
 
         return response()->json(['message' => 'Auto no encontrado'], 404);
-    }
-
-    public function MostrarAutos()
-    {
-        $autos = Auto::all();
-        return response()->json($autos);
     }
 
     public function EliminarAuto($id)
