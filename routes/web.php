@@ -12,10 +12,14 @@ Route::post('/CrearAuto', [AutoController::class, 'CrearAuto']);
 
 Route::get('/MostrarAutos', [AutoController::class, 'MostrarAutos'])->name('MostrarAutos');
 
-Route::get('/ver_formulario', [AutoController::class, 'ver_formulario']);
+Route::get('/MostrarFormulario', [AutoController::class, 'MostrarFormulario']);
 
 Route::get('/BuscarAuto/{id}', [AutoController::class, 'BuscarAuto']);
 
-Route::get('/ModificarAuto/{id}', [AutoController::class, 'ModificarAuto']);
+Route::post('/ModificarAuto/{id}', [AutoController::class, 'ModificarAuto'])->name('ModificarAuto');
 
 Route::get('/EliminarAuto/{id}', [AutoController::class, 'EliminarAuto']);
+
+Route::post('/Desactivar/{id}', [AutoController::class, 'Desactivar'])->name('Desactivar');
+
+Route::post('/Activar/{id}', [AutoController::class, 'Activar'])->name('Activar');
