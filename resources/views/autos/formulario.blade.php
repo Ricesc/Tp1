@@ -9,34 +9,42 @@
 </head>
 
 <body>
-
-    <div class="container">
+    <div class="container mt-5">
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                <li>{{$error}}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <h1>Formulario de Registro</h1>
         <form action="/CrearAuto" method="post">
             @csrf
             <div class="form-group">
                 <label for="marca" class="form-label">Marca</label>
-                <input class="form-control" type="text" id="marca" name="marca" required>
+                <input class="form-control" type="text" id="marca" name="marca">
             </div>
             <div class="form-group">
                 <label for="modelo" class="form-label">Modelo</label>
-                <input class="form-control" type="text" id="modelo" name="modelo" required>
+                <input class="form-control" type="text" id="modelo" name="modelo">
             </div>
             <div class="form-group">
                 <label for="anio" class="form-label">Año</label>
-                <input class="form-control" type="number" id="anio" name="anio" required>
+                <input class="form-control" type="number" id="anio" name="anio">
             </div>
             <div class="form-group">
                 <label for="color" class="form-label">Color</label>
-                <input class="form-control" type="text" id="color" name="color" required>
+                <input class="form-control" type="text" id="color" name="color">
             </div>
             <div class="form-group">
                 <label for="precio" class="form-label">Precio</label>
-                <input class="form-control" type="number" id="precio" name="precio" required>
+                <input class="form-control" type="number" id="precio" name="precio">
             </div>
             <div class="form-group">
                 <label for="activo" class="form-label">Estado</label>
-                <select class="form-select" name="activo" id="activo" required>
+                <select class="form-select" name="activo" id="activo">
                     <option value="" disabled selected>Seleccione una opción</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
