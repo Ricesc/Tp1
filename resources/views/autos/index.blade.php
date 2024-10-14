@@ -1,34 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Autos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-</head>
+@section('title', 'Lista de Autos')
 
-<body>
-    <div class="container mt-4">
-        @if(session('success'))
-        <div class="alert alert-success">
-            {{session('success')}}
-        </div>
-        @endif
-        <h1> Lista de Autos</h1>
-        <a href="{{url('MostrarFormulario')}}" class="btn btn-primary">Nuevo</a>
-        <br>
-        <br>
-        <form action="{{url('MostrarAutos')}}" method="get" class="mb-4">
-            <div class="input-group d-flex gap-3 align-items-center">
-                <label for="buscar">Buscar:</label>
-                <input type="text" name="buscar" id="buscar" class="form-control" placeholder="Buscar por Modelo" value="{{request()->get('buscar')}}">
+@section('content')
+        
+        <!-- Título y botón para nuevo auto -->
+        <h1>Lista de Autos</h1>
+        <!-- Mensajes de éxito o error -->
+        <x-alert />
+        
+        <a href="{{ url('MostrarFormulario') }}" class="btn btn-primary mb-3">Nuevo Auto</a>
+        
+        <!-- Formulario de búsqueda -->
+        <form action="{{ url('MostrarAutos') }}" method="get" class="mb-4">
+            <div class="input-group">
+                <input type="text" name="buscar" id="buscar" class="form-control" placeholder="Buscar por Modelo" value="{{ request()->get('buscar') }}">
                 <button type="submit" class="btn btn-success">Buscar</button>
             </div>
         </form>
+
+        <!-- Tabla de autos -->
         <table class="table table-striped">
-            <thead>
+            <thead class="table-dark">
                 <tr>
                     <th>ID</th>
                     <th>Marca</th>
@@ -45,62 +38,73 @@
             <tbody>
                 @foreach($autos as $auto)
                 <tr>
-                    <td>{{$auto->id}}</td>
-                    <td>{{$auto->marca}}</td>
-                    <td>{{$auto->modelo}}</td>
-                    <td>{{$auto->anio}}</td>
-                    <td>{{$auto->color}}</td>
-                    <td>{{$auto->precio}}</td>
-                    @if($auto->activo == 1)
-                    <td><span class="badge text-bg-primary">Sí</span></td>
-                    @elseif($auto->activo == 0)
-                    <td><span class="badge text-bg-warning">No</span></td>
-                    @else
-                    <td><span class="badge text-bg-danger">Error</span></td>
-                    @endif
-                    <td>{{$auto->created_at}}</td>
-                    <td>{{$auto->updated_at}}</td>
-                    @if ($auto->activo = '1')
+                    <td>{{ $auto->id }}</td>
+                    <td>{{ $auto->marca }}</td>
+                    <td>{{ $auto->modelo }}</td>
+                    <td>{{ $auto->anio }}</td>
+                    <td>{{ $auto->color }}</td>
+                    <td>{{ $auto->precio }}</td>
                     <td>
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-{{$auto->id}}">
-                            <span class="material-symbols-outlined"> edit </span>
-                        </button>
-                        <div class="modal fade" id="editModal-{{$auto->id}}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
-                            <div class="modal-dialog" role="document">
+                        <span class="badge {{ $auto->activo ? 'text-bg-primary' : 'text-bg-warning' }}">
+                            {{ $auto->activo ? 'Sí' : 'No' }}
+                        </span>
+                    </td>
+                    <td>{{ $auto->created_at }}</td>
+                    <td>{{ $auto->updated_at }}</td>
+                    <td>
+                        <!-- Acciones dependiendo del estado del auto -->
+                        @if($auto->activo)
+                        <div class="d-flex gap-2">
+                            <!-- Botón editar -->
+                            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editModal-{{ $auto->id }}">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <!-- Botón desactivar -->
+                            <form action="{{ route('Desactivar', $auto->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-warning">
+                                    <span class="material-symbols-outlined">toggle_off</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <!-- Modal para editar auto -->
+                        <div class="modal fade" id="editModal-{{ $auto->id }}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="editModalLabel">Modal title</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <h5 class="modal-title" id="editModalLabel">Editar Auto</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="{{route('ModificarAuto', $auto->id)}}" method="post">
+                                        <form action="{{ route('ModificarAuto', $auto->id) }}" method="POST">
                                             @csrf
-                                            @method('post')
-                                            <div class="form-group">
-                                                <label for="marca">Marca:</label>
-                                                <input type="text" value="{{$auto->marca}}" name="marca" id="marca" class="form-control">
+                                            <!-- Campos del formulario -->
+                                            <div class="mb-3">
+                                                <label for="marca" class="form-label">Marca</label>
+                                                <input type="text" name="marca" class="form-control" value="{{ $auto->marca }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="modelo">Modelo:</label>
-                                                <input type="text" value="{{$auto->modelo}}" name="modelo" id="modelo" class="form-control">
+                                            <div class="mb-3">
+                                                <label for="modelo" class="form-label">Modelo</label>
+                                                <input type="text" name="modelo" class="form-control" value="{{ $auto->modelo }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="anio">Año:</label>
-                                                <input type="text" value="{{$auto->anio}}" name="anio" id="anio" class="form-control">
+                                            <div class="mb-3">
+                                                <label for="anio" class="form-label">Año</label>
+                                                <input type="text" name="anio" class="form-control" value="{{ $auto->anio }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="color">Color:</label>
-                                                <input type="text" value="{{$auto->color}}" name="color" id="color" class="form-control">color
+                                            <div class="mb-3">
+                                                <label for="color" class="form-label">Color</label>
+                                                <input type="text" name="color" class="form-control" value="{{ $auto->color }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="precio">Precio:</label>
-                                                <input type="number" value="{{$auto->precio}}" name="precio" id="precio" class="form-control">
+                                            <div class="mb-3">
+                                                <label for="precio" class="form-label">Precio</label>
+                                                <input type="number" name="precio" class="form-control" value="{{ $auto->precio }}" required>
                                             </div>
-                                            <div class="form-group">
-                                                <label for="activo">Estado:</label>
-                                                <select class="form-select" name="activo" id="activo">
-                                                    <option value="1" {{$auto->activo==1? "selected":""}}>Activo</option>
-                                                    <option value="0" {{$auto->activo==0? "selected":""}}>Inactivo</option>
+                                            <div class="mb-3">
+                                                <label for="activo" class="form-label">Estado</label>
+                                                <select name="activo" class="form-select" required>
+                                                    <option value="1" {{ $auto->activo ? 'selected' : '' }}>Activo</option>
+                                                    <option value="0" {{ !$auto->activo ? 'selected' : '' }}>Inactivo</option>
                                                 </select>
                                             </div>
                                             <div class="modal-footer">
@@ -112,24 +116,35 @@
                                 </div>
                             </div>
                         </div>
+                        @else
+                        <div class="d-flex gap-2">
+                            <!-- Botón activar -->
+                            <form action="{{ route('Activar', $auto->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-secondary">
+                                    <span class="material-symbols-outlined">toggle_on</span>
+                                </button>
+                            </form>
+                            <!-- Botón eliminar -->
+                            <form action="{{ route('EliminarAuto', $auto->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </form>
+                        </div>
+                        @endif
                     </td>
-                    @else
-                    <td>
-                        <button type="button" class="btn btn-danger">
-                            <span class="material-symbols-outlined"> block </span>
-                        </button>
-                    </td>
-                    @endif
                 </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="d-flex justify-content-center">
-            {{$autos->links()}}
+
+        <!-- Paginación -->
+        <div class="d-flex justify-content-between align-items-center">
+            <p>Mostrando {{ $autos->firstItem() }} a {{ $autos->lastItem() }} de {{ $autos->total() }} autos</p>
+            {{ $autos->links() }}
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-
-</html>
+    @endsection

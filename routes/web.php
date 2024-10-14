@@ -18,7 +18,7 @@ Route::get('/BuscarAuto/{id}', [AutoController::class, 'BuscarAuto']);
 
 Route::post('/ModificarAuto/{id}', [AutoController::class, 'ModificarAuto'])->name('ModificarAuto');
 
-Route::get('/EliminarAuto/{id}', [AutoController::class, 'EliminarAuto']);
+Route::delete('/EliminarAuto/{id}', [AutoController::class, 'EliminarAuto'])->name('EliminarAuto');
 
 Route::post('/Desactivar/{id}', [AutoController::class, 'Desactivar'])->name('Desactivar');
 

@@ -50,8 +50,11 @@ class AutoController extends Controller
     public function Desactivar($id)
     {
         $auto = Auto::find($id);
-        $auto->update(['activo' => 0]);
-        return redirect()->back()->with('success', 'El auto ha sido desactivado correctamente');
+        if ($auto) {
+            $auto->update(['activo' => 0]);
+            return redirect()->back()->with('success', 'El auto ha sido desactivado correctamente');
+        }
+        return redirect()->back()->with('error', 'Auto no encontrado');
     }
 
     public function Activar($id)
@@ -109,12 +112,10 @@ class AutoController extends Controller
     public function EliminarAuto($id)
     {
         $auto = Auto::find($id);
-        if ($auto->activo == 0) {
+        if ($auto && $auto->activo == 0) {
             $auto->delete();
-            return response()->json(['message' => 'Auto eliminado correctamente']);
-        } else {
-            return response()->json(['message' => 'El auto no se pudo eliminar']);
+            return redirect()->route('MostrarAutos')->with('success', 'Auto eliminado correctamente');
         }
-        return response()->json(['message' => 'Auto no encontrado'], 404);
+        return redirect()->route('MostrarAutos')->with('error', 'Solo se pueden eliminar autos inactivos.');
     }
 }
