@@ -23,3 +23,8 @@ Route::get('/EliminarAuto/{id}', [AutoController::class, 'EliminarAuto']);
 Route::post('/Desactivar/{id}', [AutoController::class, 'Desactivar'])->name('Desactivar');
 
 Route::post('/Activar/{id}', [AutoController::class, 'Activar'])->name('Activar');
+
+
+// rutas de pacientes
+
+Route::get('/mostrarPacientes', [AutoController::class, 'mostrarPacientes'])->name('mostrarPacientes');
